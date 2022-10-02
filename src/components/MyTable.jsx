@@ -8,7 +8,7 @@ const MyTable = ({data, sortData}) => {
         <tr>
           {Object.keys(data[0]).map(e => (
             <th
-              key={e}
+              key={Math.random()}
               onClick={() => sortData(e)}
               style={e !== 'date' ? {cursor: 'pointer'} : null}
             >
@@ -19,7 +19,7 @@ const MyTable = ({data, sortData}) => {
       </thead>
       <tbody>
         {data.map(e => (
-          <tr key={e.date}>
+          <tr key={Math.random()}>
             <td>{e.date}</td>
             <td>{e.title}</td>
             <td>{e.amount}</td>
