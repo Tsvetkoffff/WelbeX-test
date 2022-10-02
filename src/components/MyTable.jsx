@@ -1,19 +1,25 @@
 import React from 'react'
 import Table from 'react-bootstrap/Table'
 
-const MyTable = ({data}) => {
+const MyTable = ({data, sortData}) => {
   return (
     <Table striped>
       <thead>
         <tr>
           {Object.keys(data[0]).map(e => (
-            <th key={e}>{e.toUpperCase()}</th>
+            <th
+              key={e}
+              onClick={() => sortData(e)}
+              style={e !== 'date' ? {cursor: 'pointer'} : null}
+            >
+              {e.toUpperCase()}
+            </th>
           ))}
         </tr>
       </thead>
       <tbody>
         {data.map(e => (
-          <tr>
+          <tr key={e.date}>
             <td>{e.date}</td>
             <td>{e.title}</td>
             <td>{e.amount}</td>
