@@ -69,12 +69,13 @@ const App = () => {
 
   const resetHandler = () => {
     setActivePage(1)
-    paginateData(startPage, rowsPerPage)
+    paginateData(startPage)
   }
 
-  const paginateData = currentPage => {
+  const paginateData = (currentPage) => {
     const lastItem = currentPage * rowsPerPage,
       firstItem = lastItem - rowsPerPage
+    setActivePage(currentPage)
     setData(mockData.slice(firstItem, lastItem))
   }
 
