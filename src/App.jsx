@@ -25,7 +25,8 @@ const App = () => {
   const rowsTotalCount = mockData.length,
     rowsPerPage = 5,
     pagesTotalCount = Math.ceil(rowsTotalCount / rowsPerPage),
-    startPage = 1
+    startPage = 1,
+    [activePage, setActivePage] = useState(1)
 
   const [data, setData] = useState(mockData),
     [sortDirection, setSortDirection] = useState(false)
@@ -67,7 +68,8 @@ const App = () => {
   }
 
   const resetHandler = () => {
-    setData(mockData)
+    setActivePage(1)
+    paginateData(startPage, rowsPerPage)
   }
 
   const paginateData = currentPage => {
@@ -82,7 +84,7 @@ const App = () => {
     <Container>
       <MyFilter data={data} filterHandler={filterHandler} resetHandler={resetHandler} />
       <MyTable data={data} sortData={sortData} />
-      <MyPagination paginateData={paginateData} pagesTotalCount={pagesTotalCount} />
+      <MyPagination paginateData={paginateData} pagesTotalCount={pagesTotalCount} activePage={activePage} setActivePage={setActivePage} />
     </Container>
   )
 }
