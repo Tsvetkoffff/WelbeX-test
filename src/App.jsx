@@ -24,9 +24,40 @@ const App = () => {
     }
   }
 
+  const filterData = callback => {
+    const filteredData = mockData.filter(callback)
+    if (filteredData.length > 0) {
+      setData(filteredData)
+    } else {
+      alert('Sorry, the value you were looking for was not found.')
+    }
+  }
+
+  const filterHandler = (field, condition, text) => {
+    if (!text) return null
+    switch (condition) {
+      case 'equal':
+        filterData(e => e[field] == text)
+        break
+      case 'contain':
+        filterData(e => e[field].includes(text))
+        break
+      case 'more':
+        filterData(e => e[field] > parseInt(text, 10))
+        break
+      case 'less':
+        filterData(e => e[field] < parseInt(text, 10))
+        break
+    }
+  }
+
+  const resetHandler = () => {
+    setData(mockData)
+  }
+
   return (
     <Container>
-      <MyFilter data={data}/>
+      <MyFilter data={data} filterHandler={filterHandler} resetHandler={resetHandler} />
       <MyTable data={data} sortData={sortData} />
       <MyPagination data={data} />
     </Container>
