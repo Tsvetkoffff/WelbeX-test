@@ -2,11 +2,10 @@ import React, {useState} from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
-const MyFilter = ({data, filterHandler, resetHandler}) => {
-  const [columnValue, setColumnValue] = useState('date')
+const MyFilter = ({filterHandler, resetHandler}) => {
+  const [columnValue, setColumnValue] = useState('title')
   const [conditionValue, setConditionValue] = useState('equal')
   const [searchValue, setSearchValue] = useState('')
-  const conditionOptions = ['equal', 'contain', 'more', 'less']
 
   return (
     <div className='d-flex justify-content-center my-4'>
@@ -18,7 +17,7 @@ const MyFilter = ({data, filterHandler, resetHandler}) => {
           value={columnValue}
           onChange={event => setColumnValue(event.target.value)}
         >
-          {Object.keys(data[0]).map(e => (
+          {['title', 'amount', 'distance'].map(e => (
             <option key={e} value={e}>
               {e.toUpperCase()}
             </option>
@@ -33,7 +32,7 @@ const MyFilter = ({data, filterHandler, resetHandler}) => {
           value={conditionValue}
           onChange={event => setConditionValue(event.target.value)}
         >
-          {conditionOptions.map(e => (
+          {['equal', 'contain', 'more', 'less'].map(e => (
             <option key={e} value={e}>
               {e.toUpperCase()}
             </option>
@@ -50,19 +49,10 @@ const MyFilter = ({data, filterHandler, resetHandler}) => {
             value={searchValue}
             onChange={event => setSearchValue(event.target.value)}
           />
-          <Button
-            variant='primary'
-            className='mx-3'
-            onClick={() => filterHandler(columnValue, conditionValue, searchValue)}
-          >
+          <Button variant='primary' className='mx-3' onClick={() => filterHandler(columnValue, conditionValue, searchValue)} >
             Search
           </Button>
-          <Button
-            variant='danger'
-            onClick={() => resetHandler()}
-          >
-            Reset
-          </Button>
+          <Button variant='danger' onClick={() => resetHandler()} >Reset</Button>
         </div>
       </div>
     </div>

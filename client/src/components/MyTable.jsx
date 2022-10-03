@@ -6,24 +6,24 @@ const MyTable = ({data, sortData}) => {
     <Table striped>
       <thead>
         <tr>
-          {Object.keys(data[0]).map(e => (
-            <th
-              key={Math.random()}
-              onClick={() => sortData(e)}
-              style={e !== 'date' ? {cursor: 'pointer'} : null}
-            >
-              {e.toUpperCase()}
-            </th>
-          ))}
+          {['date', 'title', 'amount', 'distance'].map(h =>
+            h !== 'date' ? (
+              <th style={{cursor: 'pointer'}} key={h} onClick={() => sortData(h)}>
+                {h.toUpperCase()}
+              </th>
+            ) : (
+              <th key={h}>{h.toUpperCase()}</th>
+            )
+          )}
         </tr>
       </thead>
       <tbody>
         {data.map(e => (
-          <tr key={Math.random()}>
+          <tr key={e.id}>
             <td>{e.date}</td>
             <td>{e.title}</td>
             <td>{e.amount}</td>
-            <td>{e.content}</td>
+            <td>{e.distance}</td>
           </tr>
         ))}
       </tbody>

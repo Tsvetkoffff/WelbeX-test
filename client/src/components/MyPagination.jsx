@@ -1,17 +1,16 @@
 import React, {useState} from 'react'
 import Pagination from 'react-bootstrap/Pagination'
 
-const MyPagination = ({paginateData, pagesTotalCount, activePage, setActivePage}) => {
+const MyPagination = ({itemsPerPage, totalItems, paginate, currentPage}) => {
   let items = []
 
-  const changePage = current => {
-    setActivePage(current)
-    paginateData(current)
-  }
-
-  for (let number = 1; number <= pagesTotalCount; number++) {
+  for (let number = 1; number <= Math.ceil(totalItems / itemsPerPage); number++) {
     items.push(
-      <Pagination.Item key={number} active={number === activePage} onClick={() => changePage(number)}>
+      <Pagination.Item
+        key={number}
+        active={number === currentPage}
+        onClick={() => paginate(number)}
+      >
         {number}
       </Pagination.Item>
     )

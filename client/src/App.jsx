@@ -5,45 +5,44 @@ import MyFilter from './components/MyFilter'
 import MyTable from './components/MyTable'
 import MyPagination from './components/MyPagination'
 import {useEffect, useState} from 'react'
+import {$host} from '../http'
 
 const App = () => {
-  const mockData = [
-    {date: 1, title: 'man', amount: 5, content: 'full'},
-    {date: 2, title: 'woman', amount: 4, content: 'skinni'},
-    {date: 1, title: 'man', amount: 5, content: 'full'},
-    {date: 2, title: 'woman', amount: 4, content: 'skinni'},
-    {date: 1, title: 'man', amount: 5, content: 'full'},
-    {date: 2, title: 'woman', amount: 4, content: 'skinni'},
-    {date: 1, title: 'man', amount: 5, content: 'full'},
-    {date: 2, title: 'woman', amount: 4, content: 'skinni'},
-    {date: 1, title: 'man', amount: 5, content: 'full'},
-    {date: 2, title: 'woman', amount: 4, content: 'skinni'},
-    {date: 1, title: 'man', amount: 5, content: 'full'},
-    {date: 2, title: 'woman', amount: 4, content: 'skinni'},
-  ]
+  const [data, setData] = useState([])
+  const [filteringData, setFilteringData] = useState(data)
+  const [sortDirection, setSortDirection] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(2)
 
-  const rowsTotalCount = mockData.length,
-    rowsPerPage = 5,
-    pagesTotalCount = Math.ceil(rowsTotalCount / rowsPerPage),
-    startPage = 1,
-    [activePage, setActivePage] = useState(1)
-
-  const [data, setData] = useState(mockData),
-    [sortDirection, setSortDirection] = useState(false)
-
-  const sortData = field => {
-    if (field !== 'date') {
-      const copyData = data.concat() // make a copy of the data to avoid mutation by the sort and reverse methods
-      const sortData = copyData.sort((x, y) => (x[field] > y[field] ? 1 : -1))
-      sortDirection ? setData(sortData) : setData(sortData.reverse())
-      setSortDirection(!sortDirection)
-    }
+  const getData = async () => {
+    const res = await $host.get('/api')
+    return res.data
   }
 
+  useEffect(() => {
+    getData().then(res => setData(res))
+  }, [])
+
+  useEffect(() => {
+    setFilteringData(data)
+  }, [data])
+
+  // Sorting data by table column
+  const sortData = field => {
+    const copyData = data.concat() // make a copy of the data to avoid mutation by the sort and reverse methods
+
+    const sortData = copyData.sort((x, y) => (x[field] > y[field] ? 1 : -1))
+
+    sortDirection ? setData(sortData) : setData(sortData.reverse())
+
+    setSortDirection(!sortDirection)
+  }
+
+  // Filtering data by columns, condition and request text
   const filterData = callback => {
-    const filteredData = mockData.filter(callback)
-    if (filteredData.length > 0) {
-      setData(filteredData)
+    const newData = data.filter(callback)
+    if (newData.length > 0) {
+      setFilteringData(newData)
     } else {
       alert('Sorry, the value you were looking for was not found.')
     }
@@ -67,25 +66,29 @@ const App = () => {
     }
   }
 
+  // Reset filtering
   const resetHandler = () => {
-    setActivePage(1)
-    paginateData(startPage)
+    setFilteringData(data)
   }
 
-  const paginateData = (currentPage) => {
-    const lastItem = currentPage * rowsPerPage,
-      firstItem = lastItem - rowsPerPage
-    setActivePage(currentPage)
-    setData(mockData.slice(firstItem, lastItem))
-  }
+  // Get current items
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = filteringData.slice(indexOfFirstItem, indexOfLastItem)
 
-  useEffect(() => paginateData(startPage, rowsPerPage), [])
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber)
 
   return (
     <Container>
-      <MyFilter data={data} filterHandler={filterHandler} resetHandler={resetHandler} />
-      <MyTable data={data} sortData={sortData} />
-      <MyPagination paginateData={paginateData} pagesTotalCount={pagesTotalCount} activePage={activePage} setActivePage={setActivePage} />
+      <MyFilter filterHandler={filterHandler} resetHandler={resetHandler} />
+      <MyTable data={currentItems} sortData={sortData} />
+      <MyPagination
+        itemsPerPage={itemsPerPage}
+        totalItems={filteringData.length}
+        paginate={paginate}
+        currentPage={currentPage}
+      />
     </Container>
   )
 }
